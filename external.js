@@ -1,40 +1,41 @@
 let computerSelection;
 let playerSelection;
 
-function game() {
-  let computerScore = 0;
-  let playerScore = 0;
-  while (playerScore < 5 && computerScore < 5) {
-    const result = playRound();
-    console.log(result);
-    if (result.includes("win")) {
-      playerScore++;
-    } else if (result.includes("lost")) {
-      computerScore++;
-    }
-    console.log(`Player: ${playerScore}, Computer: ${computerScore}`);
-  }
-  if (playerScore === 5) {
-    console.log("Congratulations! You won the game!");
-  } else {
-    console.log("Sorry, you lost the game. Try again!");
-  }
-}
+let container = document.querySelector(".buttons");
+let computerScore = 0;
+let playerScore = 0;
+let result = document.querySelector(".result");
+let firstGame = true;
 
-function playRound() {
+function playRound(playerSelection) {
   computerSelection = getComputerInput();
-  playerSelection = prompt("Rock, Paper, or Scissors?").toLowerCase();
 
-  if (
-    (computerSelection == "rock" && playerSelection == "scissors") ||
-    (computerSelection == "scissors" && playerSelection == "paper") ||
-    (computerSelection == "paper" && playerSelection == "rock")
+  if (computerSelection == playerSelection) {
+    result.textContent = "It's a Tie!";
+  } else if (
+    (computerSelection == "rock" && playerSelection == "scissorsButton") ||
+    (computerSelection == "scissors" && playerSelection == "paperButton") ||
+    (computerSelection == "paper" && playerSelection == "rockButton")
   ) {
-    return "You lost!";
-  } else if (computerSelection == playerSelection) {
-    return "It's a Tie!";
+    computerScore++;
+    result.textContent = "You lost!";
   } else {
-    return "You win!";
+    playerScore++;
+    result.textContent = "You win!";
+  }
+
+  console.log(`Player: ${playerScore}, Computer: ${computerScore}`);
+
+  if (playerScore == 5) {
+    result.textContent = "Congratulations! You won the game! The game has been reset, choose any option to start.";
+    playerScore = 0;
+    computerScore = 0;
+    firstGame = false;
+  } else if (computerScore == 5) {
+    result.textContent = "Oh no! You lost the game. Try again! The game has been reset, choose any option to start.";
+    playerScore = 0;
+    computerScore = 0;
+    firstGame = false;
   }
 }
 
@@ -43,4 +44,13 @@ function getComputerInput() {
   return options[Math.floor(Math.random() * options.length)];
 }
 
-game();
+if (firstGame) {
+  result.textContent = "Choose rock, paper or scissors to start the game!";
+  firstGame = false;
+}
+
+container.addEventListener("click", function (event) {
+  if (event.target.tagName !== "BUTTON") return;
+  playerSelection = event.target.id;
+  playRound(playerSelection);
+});
